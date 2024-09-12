@@ -100,4 +100,30 @@ class UnitTest extends TestCase
         // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
         Log::info($validator->errors()->toJson());
     }
+
+    public function test_valid_data(): void
+    {
+        $data = [
+            "username" => "admin@localhost.gw",
+            "password" => "rahasia12",
+            "admin" => true,
+            "others" => "xxx"
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100"],
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        try {
+            $result = $validator->validate();
+            self::assertNotNull($result);
+            Log::info(json_encode($result));
+            // Log::info(json_encode($result, JSON_PRETTY_PRINT));
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            self::fail($exception->getMessage());
+        }
+    }
 }
