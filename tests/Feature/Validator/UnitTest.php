@@ -81,4 +81,23 @@ class UnitTest extends TestCase
             Log::error($message->toJson(JSON_PRETTY_PRINT));
         }
     }
+
+    public function test_validation_rules(): void
+    {
+        $data = [
+            "username" => "adminex",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => "required|email|max:100",
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+        Log::info($validator->errors()->toJson());
+    }
 }
