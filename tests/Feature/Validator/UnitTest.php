@@ -4,6 +4,7 @@ namespace Tests\Feature\Validator;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -125,5 +126,54 @@ class UnitTest extends TestCase
         } catch (\Illuminate\Validation\ValidationException $exception) {
             self::fail($exception->getMessage());
         }
+    }
+
+    public function test_validation_messages(): void
+    {
+        App::setLocale("id");
+
+        $data = [
+            "username" => "adminex",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100"],
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+        Log::info($validator->errors()->toJson());
+    }
+
+    public function test_validation_inline_messages(): void
+    {
+        App::setLocale("id");
+
+        $data = [
+            "username" => "adminex",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100"],
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $messages = [
+            "required" => ":attribute harus di-isi",
+            "email" => ":attribute harus berupa email",
+            "max" => ":attribute maksimal :max karakter",
+            "min" => ":attribute minimal :min karakter",
+        ];
+
+        $validator = Validator::make($data, $rules, $messages);
+
+        self::assertTrue($validator->fails());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+        Log::info($validator->errors()->toJson());
     }
 }
