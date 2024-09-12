@@ -52,4 +52,33 @@ class UnitTest extends TestCase
 
         Log::info($message->toJson(JSON_PRETTY_PRINT));
     }
+
+    public function test_exception_from_validator(): void
+    {
+        $data = [
+            "username" => "",
+            "password" => "",
+        ];
+
+        // $data = [
+        //     "username" => "admin",
+        //     "password" => "rahasia",
+        // ];
+
+        $rules = [
+            "username" => "required",
+            'password' => "required"
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        try {
+            $validator->validate();
+            self::fail("ValidationException not thrown");
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            self::assertNotNull($exception->validator);
+            $message = $exception->validator->errors();
+            Log::error($message->toJson(JSON_PRETTY_PRINT));
+        }
+    }
 }
