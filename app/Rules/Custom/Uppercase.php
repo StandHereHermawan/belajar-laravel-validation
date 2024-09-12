@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Rules\Custom;
+
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+
+class Uppercase implements ValidationRule
+{
+    /**
+     * Run the validation rule.
+     *
+     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        if ($value !== strtoupper($value)) {
+            // if ($value !== strtoupper($value)) {
+            //     $fail("The $attribute must be UPPERCASE.");
+            // }
+
+            $fail("validation.custom.uppercase")->translate([
+                "attribute" => $attribute,
+                "value" => $value,
+            ]);
+        }
+    }
+}

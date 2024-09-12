@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Validator;
 
+use App\Rules\Custom\RegistrationRule;
+use App\Rules\Custom\Uppercase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
@@ -202,5 +204,43 @@ class UnitTest extends TestCase
         self::assertTrue($validator->fails());
         // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
         Log::info($validator->errors()->toJson());
+    }
+
+    public function test_custom_rule(): void
+    {
+        $data = [
+            "username" => "admin@example",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100", new Uppercase],
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_custom_again_with_rule(): void
+    {
+        $data = [
+            "username" => "admin@example",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100", new Uppercase],
+            'password' => ["required", "min:8", "max:20", new RegistrationRule()],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
     }
 }
