@@ -176,4 +176,31 @@ class UnitTest extends TestCase
         // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
         Log::info($validator->errors()->toJson());
     }
+
+    public function test_additional_validation(): void
+    {
+        App::setLocale("id");
+
+        $data = [
+            "username" => "admin@ex",
+            "password" => "admin@ex",
+        ];
+
+        $rules = [
+            "username" => ["required", "email", "max:100"],
+            'password' => ["required", "min:8", "max:20"]
+        ];
+
+        $validator = Validator::make($data, $rules);
+        $validator->after(function (\Illuminate\Validation\Validator $validator): void {
+            $data = $validator->getData();
+            if ($data['username'] == $data['password']) {
+                $validator->errors()->add('password', 'Password tidak boleh sama dengan username');
+            }
+        });
+
+        self::assertTrue($validator->fails());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+        Log::info($validator->errors()->toJson());
+    }
 }
