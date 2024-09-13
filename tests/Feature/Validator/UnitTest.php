@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\In;
+use Illuminate\Validation\Rules\Password;
 use Tests\TestCase;
 
 class UnitTest extends TestCase
@@ -311,6 +313,63 @@ class UnitTest extends TestCase
 
         self::assertTrue($validator->fails());
         Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_rule_classes_invalid(): void
+    {
+        $data = [
+            "username" => "admin@example",
+            "password" => "rahasia",
+        ];
+
+        $rules = [
+            "username" => [
+                "required",
+                // "email",
+                // "max:100",
+                new In(values: ["Arief", "Hilmi", "Putra"])
+            ],
+            'password' => [
+                "required",
+                "min:8",
+                "max:20",
+                Password::min(6)->letters()->numbers()->symbols()
+            ],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_rule_classes_valid(): void
+    {
+        $data = [
+            "username" => "Arief",
+            "password" => "rahasia@12",
+        ];
+
+        $rules = [
+            "username" => [
+                "required",
+                // "email",
+                // "max:100",
+                new In(values: ["Arief", "Hilmi", "Putra"])
+            ],
+            'password' => [
+                "required",
+                "min:8",
+                "max:20",
+                Password::min(6)->letters()->numbers()->symbols()
+            ],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->passes());
         // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
     }
 }
