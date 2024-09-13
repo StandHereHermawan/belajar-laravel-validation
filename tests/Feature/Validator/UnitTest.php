@@ -372,4 +372,134 @@ class UnitTest extends TestCase
         self::assertTrue($validator->passes());
         // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
     }
+
+    public function test_nested_array_validation_valid(): void
+    {
+        $data = [
+            "name" => [
+                "first" => "Arief",
+                "last" => "Hermawan"
+            ],
+            "address" => [
+                "street" => "Jl. Belum ada",
+                "city" => "Bandung",
+                "country" => "Indonesia",
+            ]
+        ];
+
+        $rules = [
+            "name.first" => ["required", "max:100"],
+            "name.last" => ["max:100"],
+            "address.street" => ["max:200"],
+            "address.city" => ["required", "max:100"],
+            "address.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->passes());
+        Log::info(json_encode($validator->passes()));
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_nested_array_validation_invalid(): void
+    {
+        $data = [
+            // "name" => [
+            //     "first" => "Arief",
+            //     "last" => "Hermawan"
+            // ],
+            // "address" => [
+            //     "street" => "Jl. Belum ada",
+            //     "city" => "Bandung",
+            //     "country" => "Indonesia",
+            // ]
+        ];
+
+        $rules = [
+            "name.first" => ["required", "max:100"],
+            "name.last" => ["max:100"],
+            "address.street" => ["max:200"],
+            "address.city" => ["required", "max:100"],
+            "address.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_nested_indexed_array_validation_valid(): void
+    {
+        $data = [
+            "name" => [
+                "first" => "Arief",
+                "last" => "Hermawan"
+            ],
+            "address" => [
+                [
+                    "street" => "Jl. Belum ada",
+                    "city" => "Bandung",
+                    "country" => "Indonesia",
+                ],
+                [
+                    "street" => "Jl. Belum ada",
+                    "city" => "Belum Ada",
+                    "country" => "Indonesia",
+                ],
+            ]
+        ];
+
+        $rules = [
+            "name.first" => ["required", "max:100"],
+            "name.last" => ["max:100"],
+            "address.*.street" => ["max:200"],
+            "address.*.city" => ["required", "max:100"],
+            "address.*.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->passes());
+        Log::info(json_encode($validator->passes()));
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
+
+    public function test_nested_indexed_array_validation_invalid(): void
+    {
+        $data = [
+            "name" => [
+                "first" => "",
+                "last" => "Hermawan"
+            ],
+            "address" => [
+                [
+                    "street" => "Jl. Belum ada",
+                    "city" => "",
+                    "country" => "",
+                ],
+                [
+                    "street" => "Jl. Belum ada",
+                    "city" => "Belum Ada",
+                    "country" => "",
+                ],
+            ]
+        ];
+
+        $rules = [
+            "name.first" => ["required", "max:100"],
+            "name.last" => ["max:100"],
+            "address.*.street" => ["max:200"],
+            "address.*.city" => ["required", "max:100"],
+            "address.*.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        self::assertTrue($validator->fails());
+        Log::info($validator->errors()->toJson());
+        // Log::info($validator->errors()->toJson(JSON_PRETTY_PRINT));
+    }
 }
