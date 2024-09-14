@@ -24,10 +24,10 @@
         <form action="/form" method="post">
             @csrf
             <label>Username : @error('username') {{ $message }} @enderror
-                <input type="text" name="username" /> </label>
+                <input type="text" name="username" value="{{old(key: 'username')}}" /> </label>
             <br />
             <label>Password : @error('password') {{ $message }} @enderror
-                <input type="password" name="password" /> </label>
+                <input type="password" name="password" value="{{old(key: 'password')}}" /> </label>
             <br />
             <input type="submit" value="login" />
         </form>
