@@ -46,4 +46,23 @@ class LoginControllerTest extends TestCase
             status: 302
         );
     }
+
+    public function testFormAgainSuccess(): void
+    {
+        $response = $this->post(
+            uri: "/form/v1",
+            data: [
+                'username' => 'arief@disini.com',
+                "password" => "rahasia1234.",
+            ]
+        );
+
+        Log::info(
+            message: json_encode($response)
+        );
+
+        $response->assertStatus(
+            status: 200
+        );
+    }
 }

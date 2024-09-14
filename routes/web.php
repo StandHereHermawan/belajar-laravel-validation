@@ -45,3 +45,19 @@ Route::get(
         'form'
     ]
 );
+
+Route::post(
+    uri: '/form/v1',
+    action: [
+        App\Http\Controllers\LoginController::class,
+        'submitformAgain'
+    ]
+);
+
+Route::get(
+    uri: '/form/v1',
+    action: [
+        App\Http\Controllers\LoginController::class,
+        'formAgain'
+    ]
+);
