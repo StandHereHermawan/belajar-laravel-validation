@@ -29,3 +29,19 @@ Route::post(
         'login'
     ]
 );
+
+Route::post(
+    uri: '/form',
+    action: [
+        App\Http\Controllers\LoginController::class,
+        'submitform'
+    ]
+);
+
+Route::get(
+    uri: '/form',
+    action: [
+        App\Http\Controllers\LoginController::class,
+        'form'
+    ]
+);
