@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Console\View\Components\Factory;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get(
+    uri: '/',
+    action: function (): Factory|View {
+        return view(view: 'welcome');
+    }
+);
+
+Route::post(
+    uri: '/form/login',
+    action: [
+        App\Http\Controllers\FormController::class,
+        'login'
+    ]
+);
